@@ -191,8 +191,32 @@
 // Test SASS-ness
 // @import test.sass
 
-$blue: #3bbfce
+@warn "what"
+@debug 20px + 60px
+
+$blue: #3bbfce !default
 $margin: 16px
+
+@if $margin == 16px
+  @warn "ok"
+@else if $margin == 17px
+  @warn "a little over"
+@else
+  @warn "no way!"
+  
+@for $i from 1 through 3
+  h#{$i}
+    margin: 2em * $i
+
+@each $animal in puma, sea-slug, egret, salamander
+  .#{$animal}-icon
+    background-image: url('/images/#{$animal}.png')
+  
+@while $i > 0
+  .item-#{$i} 
+    width: 2em * $i
+  $i: $i - 2
+
 
 @import something.sass
 
@@ -241,14 +265,16 @@ p
     
   
 .border
+  @extend #data
   padding: $margin / 2
   margin: $margin / 2
-  border-color: $blue  
+  border-color: $blue
 
 #data
   +left(10px, 5%)
   $var: 200px
   +table-scaffolding($var, rgb(100, 200, 255), 500)
+
   
 //// MEDIA
 @media screen and (max-device-width: 480px)
@@ -256,3 +282,5 @@ p
     width: 400px
     font-size: 18px
     
+    header
+      margin: 5px

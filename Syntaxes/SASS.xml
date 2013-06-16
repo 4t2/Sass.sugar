@@ -109,8 +109,7 @@
 					<capture number="0" name="punctuation.separator.key-value.sass"/>
 				</starts-with>
 				<ends-with>
-					<expression>;</expression>
-					<capture number="0" name="punctuation.end"/>
+					<expression>\n</expression>
 				</ends-with>
 				<subzones>
 					<include collection="comments"/>
@@ -134,6 +133,10 @@
 								<expression>[^'") \t]+</expression>
 							</zone>
 						</subzones>
+					</zone>
+					
+					<zone name="keyword.default">
+					  <expression>!default</expression>
 					</zone>
 				</subzones>
 			</zone>
@@ -230,8 +233,16 @@
 			</zone>
 		</collection>
 		
+		<!-- Definitions for @rules that are allowed within selectors.
+		       @mixin
+		       @include
+		       @media
+		       @extend
+		       @debug
+		       @warn
+		     along with control-flow
+		  -->
 		<collection name="at-sass">
-		  <!-- @mixin -->
 		  <zone name="at-rule.mixin.definition.sass">
 		    <starts-with>
 		      <expression>((@)mixin)\s([a-zA-Z0-9_-]+)</expression>
@@ -244,7 +255,7 @@
 		      <include collection="arg-list"/>
 		    </subzones>
 		  </zone>
-		  <!-- @include -->
+
 		  <zone name="at-rule.mixin.include.sass">
 		    <starts-with>
 		      <expression>((@)include)\s([a-zA-Z0-9_-]+)</expression>
@@ -257,7 +268,7 @@
 		      <include collection="arg-list"/>
 		    </subzones>
 		  </zone>
-		  <!-- @media -->
+
 		  <zone name="at-rule.media.sass">
 		    <starts-with>
 		      <expression>^\s*((@)media\b)</expression>
@@ -290,6 +301,104 @@
 		      </zone>
 		    </subzones>
 		  </zone>
+
+		  <zone name="at-rule.extend.sass">
+		    <starts-with>
+		      <expression>((@)extend)</expression>
+		      <capture number="1" name="keyword.control"/>
+		      <capture number="2" name="punctuation.definition.keyword"/>
+		    </starts-with>
+		    <ends-with>$</ends-with>
+		    <subzones>
+		      <zone name="keyword.optional">
+		        <expression>!optional</expression>
+		      </zone>
+		    </subzones>
+		  </zone>
+		  
+		  <zone name="at-rule.debug.sass">
+		    <starts-with>
+		      <expression>((@)debug)</expression>
+		      <capture number="1" name="keyword.control"/>
+		      <capture number="2" name="punctuation.definition.keyword"/>
+		    </starts-with>
+		    <ends-with>$</ends-with>
+		    <subzones>
+		      <include collection="constants"/>
+		    </subzones>
+		  </zone>
+		  
+		  <zone name="at-rule.warn.sass">
+		    <starts-with>
+		      <expression>((@)warn)</expression>
+		      <capture number="1" name="keyword.control"/>
+	        <capture number="2" name="punctuation.definition.keyword"/>
+	      </starts-with>
+	      <ends-with>$</ends-with>
+	      <subzones>
+	        <include collection="constants"/>
+	      </subzones>
+		  </zone>
+		  
+		  <include collection="control-flow"/>
+		</collection>
+		
+		<collection name="control-flow">
+		  <zone name="control-flow.if">
+	      <expression>((@)if)</expression>
+	      <capture number="1" name="keyword.control"/>
+        <capture number="2" name="punctuation.definition.keyword"/>
+		  </zone>
+		  
+		  <zone name="control-flow.else-if">
+		    <expression>((@)else\s+if)</expression>
+		    <capture number="1" name="keyword.control"/>
+		    <capture number="2" name="punctuation.definition.keyword"/>
+		  </zone>
+		  
+		  <zone name="control-flow.else">
+		    <expression>((@)else)</expression>
+		    <capture number="1" name="keyword.control"/>
+		    <capture number="2" name="punctuation.definition.keyword"/>
+		  </zone>
+      
+      <zone name="control-flow.for">
+        <expression>((@)for)</expression>
+        <capture number="1" name="keyword.control"/>
+        <capture number="2" name="punctuation.definition.keyword"/>
+      </zone>
+      
+      <zone name="keyword.control.for.from">
+        <expression>from</expression>
+      </zone>
+      
+      <zone name="keyword.control.for.through">
+        <expression>through</expression>
+      </zone>
+      
+      <zone name="control-flow.each">
+        <starts-with>
+          <expression>((@)each)</expression>
+          <capture number="1" name="keyword.control"/>
+          <capture number="2" name="punctuation.definition.keyword"/>
+        </starts-with>
+        <ends-with>$</ends-with>
+        <subzones>
+          <include collection="sass-variable"/>
+          <zone name="keyword.in">
+            <expression>in</expression>
+          </zone>
+        </subzones>
+      </zone>
+      
+      <zone name="control-flow.while">
+        <starts-with>
+          <expression>((@)while)</expression>
+          <capture number="1" name="keyword.control"/>
+          <capture number="2" name="punctuation.definition.keyword"/>
+        </starts-with>
+        <ends-with>$</ends-with>
+      </zone>
 		</collection>
 		
 		<!-- Arg-List (should handle assignments as well!)-->
@@ -341,7 +450,7 @@
 			<zone name="mixin.sass">
 				<starts-with>
 					<expression>(\+)([a-zA-Z0-9_-]+)</expression>
-					<capture number="1" name="punctuation.definition.mixin.sass"/>
+					<capture number="1" name="punctuation.definition.keyword"/>
 					<capture number="2" name="mixin.name.sass"/>
 					<capture number="3" name="punctuation.definition.begin"/>
 				</starts-with>
